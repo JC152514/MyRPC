@@ -50,14 +50,17 @@ public class NettyInitial implements ApplicationListener<ContextRefreshedEvent> 
 					}
 				   });
 	
-			int port = 8080;
-			ChannelFuture f = serverBootstrap.bind(8080).sync();
+			int port = 8081;
+			ChannelFuture f = serverBootstrap.bind(port).sync();
 		
 			InetAddress address = InetAddress.getLocalHost();
 			CuratorFramework client = ZooKeeperFactory.getClient();
 			if(client != null){
 				System.out.println(client);
-				client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(Constans.SERVER_PATH+"/"+address.getHostAddress()+"#"+port+"#");
+				client.create().
+				creatingParentsIfNeeded().
+				withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
+               .forPath(Constans.SERVER_PATH + "/" + address.getHostAddress() + "#" + port + "#");
 				System.out.println("成功");
 
 			}
